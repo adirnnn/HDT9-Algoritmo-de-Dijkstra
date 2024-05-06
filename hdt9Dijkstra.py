@@ -7,14 +7,16 @@ class Grafo:
         self.vertices = {}
 
     def agregar_ruta(self, origen, destino, costo):
+        # Para agregar una nueva ruta al grafo entre dos estaciones con el respectivo costo
         if origen not in self.vertices:
             self.vertices[origen] = {}
         if destino not in self.vertices:
             self.vertices[destino] = {}
         self.vertices[origen][destino] = costo
-        self.vertices[destino][origen] = costo  # Las rutas son simétricas
+        self.vertices[destino][origen] = costo
 
 def leer_archivo(nombre_archivo):
+    # Para leer el archivo que contiene las rutas y costos
     grafo = Grafo()
     with open(nombre_archivo, 'r', encoding='utf-8') as archivo:
         for linea in archivo:
@@ -24,6 +26,7 @@ def leer_archivo(nombre_archivo):
     return grafo
 
 def dijkstra(grafo, inicio):
+    # Para implementar el algoritmo de Dijkstra para encontrar las rutas más baratas desde una estación de salida
     distancia = {nodo: float('inf') for nodo in grafo.vertices}
     distancia[inicio] = 0
     cola = [(0, inicio)]
@@ -39,6 +42,7 @@ def dijkstra(grafo, inicio):
     return distancia
 
 def crear_grafo_networkx(grafo):
+    # Para crear el grafo de NetworkX que representa las rutas del grafo proporcionado.
     G = nx.Graph()
     for origen, destinos in grafo.vertices.items():
         for destino, costo in destinos.items():
@@ -46,6 +50,7 @@ def crear_grafo_networkx(grafo):
     return G
 
 def mostrar_mapa(grafo_networkx):
+    # Para mostrar el mapa visual de las rutas en el grafo NetworkX utilizando matplotlib.
     pos = nx.spring_layout(grafo_networkx)  # Layout para posicionar los nodos
     nx.draw(grafo_networkx, pos, with_labels=True, node_size=700, node_color='skyblue', font_size=10, font_weight='bold')
     labels = nx.get_edge_attributes(grafo_networkx, 'weight')
