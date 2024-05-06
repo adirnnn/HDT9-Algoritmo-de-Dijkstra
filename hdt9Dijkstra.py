@@ -1,4 +1,6 @@
 import heapq
+import networkx as nx
+import matplotlib.pyplot as plt
 
 class Grafo:
     def __init__(self):
@@ -36,6 +38,21 @@ def dijkstra(grafo, inicio):
                 heapq.heappush(cola, (distancia_total, vecino))
     return distancia
 
+def crear_grafo_networkx(grafo):
+    G = nx.Graph()
+    for origen, destinos in grafo.vertices.items():
+        for destino, costo in destinos.items():
+            G.add_edge(origen, destino, weight=costo)
+    return G
+
+def mostrar_mapa(grafo_networkx):
+    pos = nx.spring_layout(grafo_networkx)  # Layout para posicionar los nodos
+    nx.draw(grafo_networkx, pos, with_labels=True, node_size=700, node_color='skyblue', font_size=10, font_weight='bold')
+    labels = nx.get_edge_attributes(grafo_networkx, 'weight')
+    nx.draw_networkx_edge_labels(grafo_networkx, pos, edge_labels=labels)
+    plt.title("Mapa de posibles destinos")
+    plt.show()
+
 def main():
     archivo_rutas = "rutas.txt"
     grafo = leer_archivo(archivo_rutas)
@@ -47,10 +64,12 @@ def main():
         return
 
     distancias = dijkstra(grafo, estacion_salida)
-
     print("Destinos posibles y costos desde", estacion_salida)
     for destino, costo in distancias.items():
         print(f"Destino: {destino}, Costo: {costo}")
+
+    grafo_networkx = crear_grafo_networkx(grafo)
+    mostrar_mapa(grafo_networkx)
 
 if __name__ == "__main__":
     main()
